@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { getGuests } from '../utils/api';
+import { getGuests, subscribeGuests } from '../utils/api';
 import { staggerContainer, staggerItem } from '../animations/variants';
 
 export default function GuestsList() {
@@ -22,8 +22,7 @@ export default function GuestsList() {
       }
     };
     fetch();
-    const interval = setInterval(fetch, 2000);
-    return () => clearInterval(interval);
+    return subscribeGuests(fetch);
   }, []);
 
   const filtered = filter ? guests.filter((g) => g.city === filter) : guests;

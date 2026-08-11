@@ -24,3 +24,16 @@ create policy guests_insert on guests for insert to anon with check (
 
 grant usage on schema public to anon;
 grant select, insert on guests to anon;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'guests'
+  ) then
+    alter publication supabase_realtime add table guests;
+  end if;
+end $$;

@@ -1,54 +1,70 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { createClient } from '@supabase/supabase-js';
 
-const headers = {
-  apikey: SUPABASE_KEY,
-  Authorization: `Bearer ${SUPABASE_KEY}`,
-  'Content-Type': 'application/json',
-  Prefer: 'return=representation'
-};
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://bpquqbasjkeudqlozzak.supabase.co';
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_FaY7EAdWhxx43V95U5YCtg_gEEpzt3f';
 
-const request = async (path, init = {}) => {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
-    ...init,
-    headers: { ...headers, ...(init.headers || {}) }
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-};
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const selectGuests = 'id,first_name,last_name,city,created_at,qr_data';
+
+const normalizeGuest = (g) => ({
+  ...g,
+  city: g.city === 'Yaound\u00e9' ? 'Yaounde' : g.city
+});
 
 export const registerGuest = async (firstName, lastName, city) => {
-  const rows = await request('/guests', {
-    method: 'POST',
-    body: JSON.stringify({
-      first_name: firstName.trim().slice(0, 100),
-      last_name: lastName.trim().slice(0, 100),
-      city,
-      qr_data: JSON.stringify({ firstName, lastName, city })
+  const first = firstName.trim().slice(0, 100);
+  const last = lastName.trim().slice(0, 100);
+  const cleanCity = city === 'Yaound\u00e9' ? 'Yaounde' : city;
+  const { data, error } = await supabase
+    .from('guests')
+    .insert({
+      first_name: first,
+      last_name: last,
+      city: cleanCity,
+      qr_data: JSON.stringify({ firstName: first, lastName: last, city: cleanCity })
     })
-  });
-  const row = rows?.[0];
-  return { success: true, id: row.id, qr_data: row.qr_data, created_at: row.created_at };
+    .select(selectGuests)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return { success: true, id: data.id, qr_data: data.qr_data, created_at: data.created_at };
 };
 
 export const getGuests = async (city = null) => {
-  const select = 'id,first_name,last_name,city,created_at,qr_data';
-  const q = city ? `?select=${select}&city=eq.${encodeURIComponent(city)}` : `?select=${select}`;
-  const guests = await request(`/guests${q}`);
-  const [douala, yaounde] = await Promise.all([
-    request('/guests?select=id&city=eq.Douala'),
-    request('/guests?select=id&city=eq.Yaounde')
-  ]);
-  return {
-    success: true,
-    guests,
-    total: guests.length,
-    counts: { douala: douala.length, yaounde: yaounde.length }
-  };
+  const cleanCity = city === 'Yaound\u00e9' ? 'Yaounde' : city;
+  let query = supabase.from('guests').select(selectGuests).order('created_at', { ascending: false });
+  if (cleanCity) query = query.eq('city', cleanCity);
+
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+
+  const guests = (data || []).map(normalizeGuest);
+  const counts = guests.reduce(
+    (acc, guest) => {
+      if (guest.city === 'Douala') acc.douala += 1;
+      if (guest.city === 'Yaounde') acc.yaounde += 1;
+      return acc;
+    },
+    { douala: 0, yaounde: 0 }
+  );
+
+  return { success: true, guests, total: guests.length, counts };
 };
 
 export const getGuest = async (id) => {
-  const rows = await request(`/guests?select=id,first_name,last_name,city,created_at,qr_data&id=eq.${encodeURIComponent(id)}`);
-  if (!rows.length) throw new Error('Invite non trouve');
-  return { success: true, guest: rows[0] };
+  const { data, error } = await supabase.from('guests').select(selectGuests).eq('id', id).single();
+  if (error) throw new Error(error.message);
+  return { success: true, guest: normalizeGuest(data) };
+};
+
+export const subscribeGuests = (callback) => {
+  const channel = supabase
+    .channel('guests-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'guests' }, callback)
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
 };

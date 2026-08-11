@@ -10,7 +10,7 @@ export async function generatePDF(id, firstName, lastName, qrData) {
 
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(28);
-  pdf.text('Invité #' + String(id).padStart(3, '0'), 105, 40, { align: 'center' });
+  pdf.text('Invite #' + String(id).padStart(3, '0'), 105, 40, { align: 'center' });
 
   pdf.setFontSize(16);
   pdf.text(firstName + ' ' + lastName, 105, 80, { align: 'center' });
@@ -19,7 +19,7 @@ export async function generatePDF(id, firstName, lastName, qrData) {
 
   pdf.setFontSize(10);
   pdf.setTextColor(150, 150, 150);
-  pdf.text("Scannez ce code QR à l'entrée", 105, 220, { align: 'center' });
+  pdf.text("Scannez ce code QR a l'entree", 105, 220, { align: 'center' });
 
   pdf.save(`invitations_${id}.pdf`);
 }

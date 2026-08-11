@@ -9,9 +9,8 @@ export default function Navbar() {
 
   const links = [
     { path: '/', label: 'Accueil' },
-    { path: '/register', label: 'Enregistrement' },
-    { path: '/guests', label: 'Invités' },
-    { path: '/photos', label: 'Galerie' }
+    { path: '/inscription', label: 'Enregistrement' },
+    { path: '/invites', label: 'Invites' }
   ];
 
   const isActive = (path) => loc.pathname === path;
@@ -21,13 +20,13 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 w-full bg-dark-gray/95 backdrop-blur border-b-2 border-gold z-50"
+      className="fixed top-0 z-50 w-full border-b-2 border-gold bg-dark-gray/95 backdrop-blur"
     >
-      <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
         <motion.div
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.03 }}
           onClick={() => nav('/')}
-          className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold to-cream cursor-pointer"
+          className="max-w-[14rem] cursor-pointer bg-gradient-to-r from-gold to-cream bg-clip-text text-2xl font-bold leading-tight text-transparent sm:max-w-none"
         >
           Confirmation de presence
         </motion.div>
@@ -36,13 +35,13 @@ export default function Navbar() {
           {open ? 'Fermer' : 'Menu'}
         </button>
 
-        <div className="hidden lg:flex gap-8">
+        <div className="hidden gap-8 lg:flex">
           {links.map((l) => (
             <motion.button
               key={l.path}
               whileHover={{ scale: 1.1 }}
               onClick={() => nav(l.path)}
-              className={`font-semibold transition ${isActive(l.path) ? 'text-gold border-b-2 border-gold' : 'text-cream hover:text-gold'}`}
+              className={`font-semibold transition ${isActive(l.path) ? 'border-b-2 border-gold text-gold' : 'text-cream hover:text-gold'}`}
             >
               {l.label}
             </motion.button>
@@ -53,7 +52,7 @@ export default function Navbar() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-16 left-0 right-0 bg-dark-gray/95 flex flex-col gap-4 p-6 lg:hidden border-b border-gold"
+            className="absolute left-0 right-0 top-16 flex flex-col gap-4 border-b border-gold bg-dark-gray/95 p-6 lg:hidden"
           >
             {links.map((l) => (
               <button
@@ -62,7 +61,7 @@ export default function Navbar() {
                   nav(l.path);
                   setOpen(false);
                 }}
-                className={`font-semibold text-left ${isActive(l.path) ? 'text-gold' : 'text-cream'}`}
+                className={`text-left font-semibold ${isActive(l.path) ? 'text-gold' : 'text-cream'}`}
               >
                 {l.label}
               </button>

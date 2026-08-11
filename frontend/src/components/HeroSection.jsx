@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { heroVideos } from '../assets/media';
 
 export default function HeroSection() {
   const nav = useNavigate();
-  const [videoSrc] = useState(() => heroVideos[Math.floor(Math.random() * heroVideos.length)]);
+  const [videoIndex, setVideoIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVideoIndex((i) => (i + 1) % heroVideos.length);
+    }, 9000);
+    return () => clearInterval(interval);
+  }, []);
 
   const titleVariants = {
     hidden: { opacity: 0 },
@@ -30,20 +37,25 @@ export default function HeroSection() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pt-20"
     >
-      <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover -z-10">
-        <source src={videoSrc} type="video/mp4" />
+      <video key={heroVideos[videoIndex]} autoPlay muted playsInline className="absolute inset-0 -z-10 h-full w-full object-cover">
+        <source src={heroVideos[videoIndex]} type="video/mp4" />
       </video>
 
-      <div className="absolute inset-0 bg-black/50 -z-10" />
+      <div className="absolute inset-0 -z-10 bg-black/55" />
 
-      <motion.div variants={titleVariants} initial="hidden" animate="visible" className="flex gap-2 mb-6">
+      <motion.div
+        variants={titleVariants}
+        initial="hidden"
+        animate="visible"
+        className="mb-6 flex max-w-[22rem] flex-wrap justify-center gap-x-2 gap-y-1 text-center leading-none sm:max-w-4xl"
+      >
         {title.split('').map((char, i) => (
           <motion.span
             key={i}
             variants={letterVariants}
-            className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold via-cream to-gold"
+            className="bg-gradient-to-r from-gold via-cream to-gold bg-clip-text text-[clamp(2.2rem,11vw,6rem)] font-black text-transparent md:text-8xl"
           >
             {char}
           </motion.span>
@@ -54,22 +66,22 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.6 }}
-        className="text-xl md:text-2xl text-cream mb-8 text-center max-w-2xl"
+        className="mb-8 max-w-2xl text-center text-xl text-cream md:text-2xl"
       >
-        Enregistrement d'invités simple, rapide et élégant
+        Enregistrement d'invites simple, rapide et elegant
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="flex gap-4 flex-col sm:flex-row"
+        className="flex flex-col gap-4 sm:flex-row"
       >
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => nav('/register')}
-          className="px-8 py-4 bg-gold hover:bg-gold/90 text-dark-gray font-bold rounded-lg transition shadow-lg hover:shadow-gold/50"
+          onClick={() => nav('/inscription')}
+          className="rounded-lg bg-gold px-8 py-4 font-bold text-dark-gray shadow-lg transition hover:bg-gold/90 hover:shadow-gold/50"
         >
           S'enregistrer
         </motion.button>
@@ -77,10 +89,10 @@ export default function HeroSection() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => nav('/guests')}
-          className="px-8 py-4 bg-transparent border-2 border-gold text-gold hover:bg-gold/10 font-bold rounded-lg transition"
+          onClick={() => nav('/invites')}
+          className="rounded-lg border-2 border-gold bg-transparent px-8 py-4 font-bold text-gold transition hover:bg-gold/10"
         >
-          Voir les invités
+          Voir les invites
         </motion.button>
       </motion.div>
 
@@ -89,7 +101,7 @@ export default function HeroSection() {
         transition={{ duration: 3, repeat: Infinity }}
         className="absolute bottom-10 text-cream"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
       </motion.div>
