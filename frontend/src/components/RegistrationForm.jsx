@@ -26,7 +26,7 @@ export default function RegistrationForm() {
     try {
       const res = await registerGuest(form.firstName, form.lastName, form.city);
       await generatePDF(res.id, form.firstName, form.lastName, res.qr_data);
-      setMsg('Enregistré. PDF téléchargé');
+      setMsg('Enregistre. PDF telecharge');
       setMsgType('success');
       setForm({ firstName: '', lastName: '', city: 'Douala' });
       setTimeout(() => setMsg(''), 3000);
@@ -54,7 +54,7 @@ export default function RegistrationForm() {
               <input
                 type="text"
                 name="firstName"
-                placeholder="Prénom"
+                placeholder="Prenom"
                 value={form.firstName}
                 onChange={handle}
                 className="w-full bg-dark-gray/50 text-cream px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition placeholder-cream/50"
@@ -82,7 +82,7 @@ export default function RegistrationForm() {
                 className="w-full bg-dark-gray/50 text-cream px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition"
               >
                 <option value="Douala">Douala</option>
-                <option value="Yaoundé">Yaoundé</option>
+                <option value="Yaounde">Yaounde</option>
               </select>
             </motion.div>
 

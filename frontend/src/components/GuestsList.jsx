@@ -27,8 +27,10 @@ export default function GuestsList() {
   }, []);
 
   const filtered = filter ? guests.filter((g) => g.city === filter) : guests;
-  const grouped = { Douala: [], 'Yaoundé': [] };
-  filtered.forEach((g) => grouped[g.city].push(g));
+  const grouped = { Douala: [], Yaounde: [] };
+  filtered.forEach((g) => {
+    if (grouped[g.city]) grouped[g.city].push(g);
+  });
 
   return (
     <motion.section
@@ -38,7 +40,7 @@ export default function GuestsList() {
       className="min-h-screen bg-gradient-to-br from-dark-cream to-dark-gray px-4 py-20 mt-16"
     >
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gold mb-8 text-center">Liste des invités</h1>
+        <h1 className="text-4xl font-bold text-gold mb-8 text-center">Liste des invites</h1>
 
         <div className="flex gap-4 justify-center mb-8 flex-wrap">
           <motion.button
@@ -57,10 +59,10 @@ export default function GuestsList() {
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
-            onClick={() => setFilter('Yaoundé')}
-            className={`px-6 py-2 rounded-lg font-bold transition ${filter === 'Yaoundé' ? 'bg-gold text-dark-gray' : 'bg-dark-gray/50 text-cream hover:bg-dark-gray/70 border border-gold'}`}
+            onClick={() => setFilter('Yaounde')}
+            className={`px-6 py-2 rounded-lg font-bold transition ${filter === 'Yaounde' ? 'bg-gold text-dark-gray' : 'bg-dark-gray/50 text-cream hover:bg-dark-gray/70 border border-gold'}`}
           >
-            Yaoundé ({counts.yaounde})
+            Yaounde ({counts.yaounde})
           </motion.button>
         </div>
 
@@ -68,7 +70,7 @@ export default function GuestsList() {
           <div className="text-center text-cream">Chargement...</div>
         ) : (
           <div className="space-y-8">
-            {['Douala', 'Yaoundé'].map(
+            {['Douala', 'Yaounde'].map(
               (city) =>
                 grouped[city].length > 0 && (
                   <motion.div key={city} variants={staggerContainer} initial="hidden" whileInView="visible">
@@ -98,7 +100,7 @@ export default function GuestsList() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-12 p-6 bg-dark-gray/50 rounded-lg border-2 border-gold text-center"
         >
-          <p className="text-cream mb-2">Total d'invités</p>
+          <p className="text-cream mb-2">Total d'invites</p>
           <motion.p key={filtered.length} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-5xl font-bold text-gold">
             {filtered.length}
           </motion.p>
