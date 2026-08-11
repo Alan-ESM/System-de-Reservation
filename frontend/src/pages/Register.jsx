@@ -104,7 +104,7 @@ export default function Register() {
               <motion.p
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`mt-4 text-center font-semibold ${msgType === 'success' ? 'text-green-400' : 'text-red-400'}`}
+                className={`mt-4 text-center font-semibold ${msgType === 'success' ? 'text-gold' : 'text-white'}`}
               >
                 {msg}
               </motion.p>
