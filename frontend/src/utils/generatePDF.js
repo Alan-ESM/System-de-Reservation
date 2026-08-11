@@ -1,0 +1,25 @@
+import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
+
+export async function generatePDF(id, firstName, lastName, qrData) {
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const qrImg = await QRCode.toDataURL(qrData, { width: 200, margin: 1 });
+  
+  pdf.setFillColor(15, 23, 42);
+  pdf.rect(0, 0, 210, 297, 'F');
+  
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(28);
+  pdf.text('Invité #' + String(id).padStart(3, '0'), 105, 40, { align: 'center' });
+  
+  pdf.setFontSize(16);
+  pdf.text(firstName + ' ' + lastName, 105, 80, { align: 'center' });
+  
+  pdf.addImage(qrImg, 'PNG', 60, 110, 90, 90);
+  
+  pdf.setFontSize(10);
+  pdf.setTextColor(150, 150, 150);
+  pdf.text('Scannez ce code QR à l\'entrée', 105, 220, { align: 'center' });
+  
+  pdf.save(`invitations_${id}.pdf`);
+}

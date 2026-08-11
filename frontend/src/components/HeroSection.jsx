@@ -1,0 +1,104 @@
+// frontend/src/components/HeroSection.jsx (adapté avec video background)
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+
+const videos = ['/images/background/VID-1.mp4', '/images/background/VID-2.mp4', '/images/background/VID-3.mp4'];
+
+export default function HeroSection() {
+  const nav = useNavigate();
+  const randVideo = videos[Math.floor(Math.random() * videos.length)];
+
+  const titleVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const letterVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
+
+  const title = "EventFlow";
+
+  return (
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4"
+    >
+      <video
+        autoPlay
+        muted
+        loop
+        className="absolute inset-0 w-full h-full object-cover -z-10"
+      >
+        <source src={randVideo} type="video/mp4" />
+      </video>
+
+      <div className="absolute inset-0 bg-black/50 -z-10" />
+
+      <motion.div variants={titleVariants} initial="hidden" animate="visible" className="flex gap-2 mb-6">
+        {title.split('').map((char, i) => (
+          <motion.span
+            key={i}
+            variants={letterVariants}
+            className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold via-cream to-gold"
+          >
+            {char}
+          </motion.span>
+        ))}
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        className="text-xl md:text-2xl text-cream mb-8 text-center max-w-2xl"
+      >
+        Enregistrement d'invités simple, rapide et élégant
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.6 }}
+        className="flex gap-4 flex-col sm:flex-row"
+      >
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => nav('/register')}
+          className="px-8 py-4 bg-gold hover:bg-gold/90 text-dark-gray font-bold rounded-lg transition shadow-lg hover:shadow-gold/50"
+        >
+          S'enregistrer
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => nav('/guests')}
+          className="px-8 py-4 bg-transparent border-2 border-gold text-gold hover:bg-gold/10 font-bold rounded-lg transition"
+        >
+          Voir les invités
+        </motion.button>
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 3, repeat: Infinity }}
+        className="absolute bottom-10 text-cream"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
+      </motion.div>
+    </motion.section>
+  );
+}
