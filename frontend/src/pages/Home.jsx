@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import Navbar from '../components/Navbar';
+import PhotoCarousel from '../components/PhotoCarousel';
 import TeamSection from '../components/TeamSection';
 
 export default function Home() {
@@ -9,6 +10,7 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <TeamSection />
+      <PhotoCarousel />
       <motion.footer
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

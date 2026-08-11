@@ -10,7 +10,8 @@ export default function Navbar() {
   const links = [
     { path: '/', label: 'Accueil' },
     { path: '/inscription', label: 'Enregistrement' },
-    { path: '/invites', label: 'Invites' }
+    { path: '/invites', label: 'Invites' },
+    { path: '/galerie', label: 'Galerie' }
   ];
 
   const isActive = (path) => loc.pathname === path;
