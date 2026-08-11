@@ -1,33 +1,31 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase, normalizeCity } from './_supabase.js';
 
-const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  });
 
 export async function POST(req) {
   try {
     const { firstName, lastName, city } = await req.json();
-    
-    if (!firstName?.trim() || !lastName?.trim() || !city?.trim()) {
-      return Response.json({ error: 'Missing fields' }, { status: 400 });
-    }
-    
-    if (!['Douala', 'Yaoundé'].includes(city)) {
-      return Response.json({ error: 'Invalid city' }, { status: 400 });
-    }
-    
-    const fn = firstName.trim().substring(0, 100);
-    const ln = lastName.trim().substring(0, 100);
-    const qrData = JSON.stringify({ firstName: fn, lastName: ln, city });
-    
-    const { data, error } = await sb
+    const fn = String(firstName ?? '').trim().slice(0, 100);
+    const ln = String(lastName ?? '').trim().slice(0, 100);
+    const normalizedCity = normalizeCity(city);
+
+    if (!fn || !ln || !normalizedCity) return json({ error: 'Missing fields' }, 400);
+
+    const qr_data = JSON.stringify({ firstName: fn, lastName: ln, city: normalizedCity });
+    const { data, error } = await supabase
       .from('guests')
-      .insert([{ first_name: fn, last_name: ln, city, qr_data: qrData }])
+      .insert([{ first_name: fn, last_name: ln, city: normalizedCity, qr_data }])
       .select('id, qr_data, created_at')
       .single();
-    
+
     if (error) throw error;
-    
-    return Response.json({ success: true, id: data.id, qr_data: data.qr_data }, { status: 201 });
-  } catch (err) {
-    return Response.json({ error: 'Server error' }, { status: 500 });
+
+    return json({ success: true, id: data.id, qr_data: data.qr_data, created_at: data.created_at }, 201);
+  } catch {
+    return json({ error: 'Server error' }, 500);
   }
 }

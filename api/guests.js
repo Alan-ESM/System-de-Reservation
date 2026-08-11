@@ -1,34 +1,35 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase, normalizeCity } from './_supabase.js';
 
-const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  });
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const city = searchParams.get('city');
-    
-    let q = sb.from('guests').select('id, first_name, last_name, city, created_at');
-    
-    if (city && ['Douala', 'Yaoundé'].includes(city)) {
-      q = q.eq('city', city);
-    }
-    
-    const { data, error } = await q.order('city', { ascending: true }).order('id', { ascending: true });
-    
+    const city = normalizeCity(searchParams.get('city'));
+
+    let query = supabase.from('guests').select('id, first_name, last_name, city, created_at, qr_data');
+    if (city) query = query.eq('city', city);
+
+    const { data, error } = await query.order('city', { ascending: true }).order('id', { ascending: true });
     if (error) throw error;
-    
-    return Response.json({ 
-      success: true, 
-      guests: data,
-      total: data.length,
+
+    const all = supabase.from('guests').select('city', { count: 'exact', head: false });
+    const { data: allGuests } = await all;
+
+    return json({
+      success: true,
+      guests: data ?? [],
+      total: (data ?? []).length,
       counts: {
-        douala: data.filter(g => g.city === 'Douala').length,
-        yaounde: data.filter(g => g.city === 'Yaoundé').length
+        douala: (allGuests ?? []).filter((g) => g.city === 'Douala').length,
+        yaounde: (allGuests ?? []).filter((g) => g.city === 'Yaounde').length
       }
-    }, { 
-      headers: { 'Cache-Control': 'no-store, max-age=0' }
     });
-  } catch (err) {
-    return Response.json({ error: 'Server error' }, { status: 500 });
+  } catch {
+    return json({ error: 'Server error' }, 500);
   }
 }
