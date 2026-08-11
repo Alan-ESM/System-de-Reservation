@@ -22,13 +22,15 @@ export const registerGuest = async (firstName, lastName, city) => {
       first_name: first,
       last_name: last,
       city: cleanCity,
-      qr_data: JSON.stringify({ firstName: first, lastName: last, city: cleanCity })
+      qr_data: ''
     })
     .select(selectGuests)
     .single();
 
   if (error) throw new Error(error.message);
-  return { success: true, id: data.id, qr_data: data.qr_data, created_at: data.created_at };
+  const qrData = `ID: "${data.id}"\nNom: "${last}"\nPrenom: "${first}"\nVille: "${cleanCity}"`;
+  await supabase.from('guests').update({ qr_data: qrData }).eq('id', data.id);
+  return { success: true, id: data.id, qr_data: qrData, created_at: data.created_at };
 };
 
 export const getGuests = async (city = null) => {

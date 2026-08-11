@@ -1,39 +1,25 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Navbar from '../components/Navbar';
 import { registerGuest } from '../utils/api';
 import { generatePDF } from '../utils/generatePDF';
-import Navbar from '../components/Navbar';
 
 export default function Register() {
   const [form, setForm] = useState({ firstName: '', lastName: '', city: 'Douala' });
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
-  const [msgType, setMsgType] = useState('');
-
-  const handle = (e) => {
-    const { name, value } = e.target;
-    setForm((p) => ({ ...p, [name]: value }));
-  };
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!form.firstName.trim() || !form.lastName.trim()) {
-      setMsg('Remplissez tous les champs');
-      setMsgType('error');
-      return;
-    }
-
+    if (!form.firstName.trim() || !form.lastName.trim()) return setMsg('Remplissez tous les champs');
     setLoading(true);
     try {
       const res = await registerGuest(form.firstName, form.lastName, form.city);
       await generatePDF(res.id, form.firstName, form.lastName, res.qr_data);
       setMsg('Enregistre. PDF telecharge');
-      setMsgType('success');
       setForm({ firstName: '', lastName: '', city: 'Douala' });
-      setTimeout(() => setMsg(''), 3000);
     } catch (e) {
       setMsg('Erreur: ' + e.message);
-      setMsgType('error');
     } finally {
       setLoading(false);
     }
@@ -42,74 +28,23 @@ export default function Register() {
   return (
     <>
       <Navbar />
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 px-4 py-20 mt-16"
-      >
-        <div className="max-w-md mx-auto">
-          <motion.div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gold/40" whileHover={{ borderColor: '#d4af37' }}>
-            <h1 className="text-3xl font-bold text-white mb-8 text-center">Enregistrement</h1>
-
+      <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="min-h-screen bg-white px-4 py-24">
+        <div className="mx-auto max-w-md">
+          <div className="rounded-2xl border border-gold bg-white p-8 shadow-xl">
+            <h1 className="mb-8 text-center text-3xl font-bold text-gray-900">Enregistrement</h1>
             <form onSubmit={submit} className="space-y-6">
-              <motion.div whileHover={{ scale: 1.02 }} className="relative">
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder="Prenom"
-                  value={form.firstName}
-                  onChange={handle}
-                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition placeholder-gray-400"
-                  required
-                />
-              </motion.div>
-
-              <motion.div whileHover={{ scale: 1.02 }} className="relative">
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Nom"
-                  value={form.lastName}
-                  onChange={handle}
-                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition placeholder-gray-400"
-                  required
-                />
-              </motion.div>
-
-              <motion.div whileHover={{ scale: 1.02 }} className="relative">
-                <select
-                  name="city"
-                  value={form.city}
-                  onChange={handle}
-                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition"
-                >
-                  <option value="Douala">Douala</option>
-                  <option value="Yaounde">Yaounde</option>
-                </select>
-              </motion.div>
-
-              <motion.button
-                type="submit"
-                disabled={loading}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full bg-gold hover:bg-gold/90 text-dark-gray font-bold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              <input name="firstName" placeholder="Prenom" value={form.firstName} onChange={(e) => setForm((p) => ({ ...p, firstName: e.target.value }))} className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gold" required />
+              <input name="lastName" placeholder="Nom" value={form.lastName} onChange={(e) => setForm((p) => ({ ...p, lastName: e.target.value }))} className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gold" required />
+              <select name="city" value={form.city} onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))} className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gold">
+                <option value="Douala">Douala</option>
+                <option value="Yaounde">Yaounde</option>
+              </select>
+              <button type="submit" disabled={loading} className="w-full rounded-lg bg-gold py-3 font-bold text-gray-900 transition hover:bg-gold/90 disabled:opacity-50">
                 {loading ? 'Traitement...' : 'Enregistrer'}
-              </motion.button>
+              </button>
             </form>
-
-            {msg && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`mt-4 text-center font-semibold ${msgType === 'success' ? 'text-gold' : 'text-white'}`}
-              >
-                {msg}
-              </motion.p>
-            )}
-          </motion.div>
+            {msg && <p className="mt-4 text-center font-semibold text-gray-900">{msg}</p>}
+          </div>
         </div>
       </motion.section>
     </>

@@ -1,112 +1,60 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { getGuests, subscribeGuests } from '../utils/api';
 import Navbar from '../components/Navbar';
-import { staggerContainer, staggerItem } from '../animations/variants';
+import { getGuests, subscribeGuests } from '../utils/api';
 
 export default function GuestsList() {
   const [guests, setGuests] = useState([]);
-  const [counts, setCounts] = useState({ douala: 0, yaounde: 0 });
-  const [filter, setFilter] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
-      try {
-        const res = await getGuests();
-        setGuests(res.guests);
-        setCounts(res.counts);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+      const res = await getGuests();
+      setGuests(res.guests);
+      setLoading(false);
     };
     fetch();
     return subscribeGuests(fetch);
   }, []);
 
-  const filtered = filter ? guests.filter((g) => g.city === filter) : guests;
-  const grouped = { Douala: [], Yaounde: [] };
-  filtered.forEach((g) => {
-    if (grouped[g.city]) grouped[g.city].push(g);
-  });
+  const exportList = () => {
+    const rows = [['ID', 'Nom', 'Prenom'], ...guests.map((g) => [g.id, g.last_name, g.first_name])];
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'invites.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <>
       <Navbar />
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 px-4 py-20 mt-16"
-      >
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-white mb-8 text-center">Liste des invites</h1>
-
-          <div className="flex gap-4 justify-center mb-8 flex-wrap">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              onClick={() => setFilter(null)}
-              className={`px-6 py-2 rounded-lg font-bold transition ${!filter ? 'bg-gold text-dark-gray' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
-            >
-              Tous ({filtered.length})
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              onClick={() => setFilter('Douala')}
-              className={`px-6 py-2 rounded-lg font-bold transition ${filter === 'Douala' ? 'bg-gold text-dark-gray' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
-            >
-              Douala ({counts.douala})
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              onClick={() => setFilter('Yaounde')}
-              className={`px-6 py-2 rounded-lg font-bold transition ${filter === 'Yaounde' ? 'bg-gold text-dark-gray' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
-            >
-              Yaounde ({counts.yaounde})
-            </motion.button>
+      <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="min-h-screen bg-white px-4 py-24">
+        <div className="mx-auto max-w-4xl">
+          <h1 className="mb-6 text-center text-4xl font-bold text-gray-900">Liste des invites</h1>
+          <div className="mb-8 flex justify-center">
+            <button onClick={exportList} className="rounded-lg border border-gold bg-white px-6 py-3 font-bold text-gray-900 transition hover:bg-gold">
+              Exporter la liste
+            </button>
           </div>
-
           {loading ? (
-            <div className="text-center text-gray-400">Chargement...</div>
+            <div className="text-center text-gray-900">Chargement...</div>
           ) : (
-            <div className="space-y-8">
-              {['Douala', 'Yaounde'].map(
-                (city) =>
-                  grouped[city].length > 0 && (
-                    <motion.div key={city} variants={staggerContainer} initial="hidden" whileInView="visible">
-                      <h2 className="text-2xl font-bold text-gold mb-4 border-b border-gray-700 pb-2">{city}</h2>
-                      <div className="space-y-2">
-                        {grouped[city].map((g) => (
-                          <motion.div
-                            key={g.id}
-                            variants={staggerItem}
-                            whileHover={{ scale: 1.02, backgroundColor: '#1f2937' }}
-                            className="bg-gray-700 text-gray-100 p-4 rounded-lg flex justify-between items-center border border-gray-600 hover:border-gold transition cursor-pointer"
-                          >
-                            <span className="font-mono text-sm text-gold min-w-12">{String(g.id).padStart(3, '0')}</span>
-                            <span className="font-semibold flex-1">{g.first_name} {g.last_name}</span>
-                            <span className="text-xs text-gray-500">{new Date(g.created_at).toLocaleTimeString('fr-FR')}</span>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )
-              )}
+            <div className="space-y-2">
+              {guests.map((g) => (
+                <div key={g.id} className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-gray-900 shadow-sm">
+                  <span className="min-w-12 font-mono text-sm text-gray-900">{String(g.id).padStart(3, '0')}</span>
+                  <span className="flex-1 font-semibold">{g.first_name} {g.last_name}</span>
+                </div>
+              ))}
             </div>
           )}
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-12 p-6 bg-gray-800 rounded-lg border border-gold text-center"
-          >
-            <p className="text-gray-300 mb-2">Total d'invites</p>
-            <motion.p key={filtered.length} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="text-5xl font-bold text-gold">
-              {filtered.length}
-            </motion.p>
-          </motion.div>
+          <div className="mt-12 rounded-lg border border-gold bg-white p-6 text-center">
+            <p className="mb-2 text-gray-700">Total d'invites</p>
+            <p className="text-5xl font-bold text-gray-900">{guests.length}</p>
+          </div>
         </div>
       </motion.section>
     </>

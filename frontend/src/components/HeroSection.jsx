@@ -10,7 +10,7 @@ export default function HeroSection() {
   useEffect(() => {
     const interval = setInterval(() => {
       setVideoIndex((i) => (i + 1) % heroVideos.length);
-    }, 9000);
+    }, 4500);
     return () => clearInterval(interval);
   }, []);
 
@@ -19,15 +19,15 @@ export default function HeroSection() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.2
+        staggerChildren: 0.015,
+        delayChildren: 0.05
       }
     }
   };
 
   const letterVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } }
   };
 
   const title = 'Confirmation de presence';
@@ -36,7 +36,7 @@ export default function HeroSection() {
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.2 }}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pt-20"
     >
       <video key={heroVideos[videoIndex]} autoPlay muted playsInline preload="auto" className="absolute inset-0 -z-10 h-full w-full object-cover bg-dark-gray">
@@ -70,7 +70,7 @@ export default function HeroSection() {
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+        transition={{ delay: 0.2, duration: 0.2 }}
         className="mb-8 max-w-2xl text-center text-xl text-cream md:text-2xl"
       >
         Enregistrement d'invites simple, rapide et elegant
@@ -79,7 +79,7 @@ export default function HeroSection() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.6 }}
+        transition={{ delay: 0.25, duration: 0.2 }}
         className="flex flex-col gap-4 sm:flex-row"
       >
         <motion.button
