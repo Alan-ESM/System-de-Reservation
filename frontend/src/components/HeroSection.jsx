@@ -39,9 +39,14 @@ export default function HeroSection() {
       transition={{ duration: 0.8 }}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pt-20"
     >
-      <video key={heroVideos[videoIndex]} autoPlay muted playsInline className="absolute inset-0 -z-10 h-full w-full object-cover">
+      <video key={heroVideos[videoIndex]} autoPlay muted playsInline preload="auto" className="absolute inset-0 -z-10 h-full w-full object-cover bg-dark-gray">
         <source src={heroVideos[videoIndex]} type="video/mp4" />
       </video>
+      <div className="hidden">
+        {heroVideos.map((src) => (
+          <video key={src} src={src} preload="auto" muted playsInline />
+        ))}
+      </div>
 
       <div className="absolute inset-0 -z-10 bg-black/55" />
 

@@ -13,17 +13,32 @@ create index if not exists idx_guests_created_at on guests(created_at desc);
 alter table guests enable row level security;
 
 drop policy if exists guests_read on guests;
-create policy guests_read on guests for select to anon using (true);
-
 drop policy if exists guests_insert on guests;
-create policy guests_insert on guests for insert to anon with check (
+drop policy if exists guests_select_public on guests;
+drop policy if exists guests_insert_public on guests;
+
+create policy guests_select_public
+on guests
+for select
+to anon, authenticated
+using (true);
+
+create policy guests_insert_public
+on guests
+for insert
+to anon, authenticated
+with check (
   length(trim(first_name)) between 1 and 100 and
   length(trim(last_name)) between 1 and 100 and
   city in ('Douala', 'Yaounde')
 );
 
 grant usage on schema public to anon;
-grant select, insert on guests to anon;
+grant usage on schema public to authenticated;
+grant select, insert on table public.guests to anon;
+grant select, insert on table public.guests to authenticated;
+grant usage, select on all sequences in schema public to anon;
+grant usage, select on all sequences in schema public to authenticated;
 
 do $$
 begin

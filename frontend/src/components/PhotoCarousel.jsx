@@ -16,12 +16,8 @@ export default function PhotoCarousel() {
           {carouselPhotos.map((p) => (
             <SwiperSlide key={p.id}>
               <div className="relative w-full h-full overflow-hidden">
-                <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
+                <img src={p.img} alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/50" />
-                <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-dark-gray via-dark-gray/80 to-transparent">
-                  <h3 className="text-gold text-3xl font-bold">{p.title}</h3>
-                  <p className="text-cream mt-2 text-lg">{p.desc}</p>
-                </div>
               </div>
             </SwiperSlide>
           ))}

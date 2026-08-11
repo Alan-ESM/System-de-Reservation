@@ -49,7 +49,7 @@ export default function Register() {
         className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 px-4 py-20 mt-16"
       >
         <div className="max-w-md mx-auto">
-          <motion.div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-700" whileHover={{ borderColor: '#3b82f6' }}>
+          <motion.div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gold/40" whileHover={{ borderColor: '#d4af37' }}>
             <h1 className="text-3xl font-bold text-white mb-8 text-center">Enregistrement</h1>
 
             <form onSubmit={submit} className="space-y-6">
@@ -60,7 +60,7 @@ export default function Register() {
                   placeholder="Prenom"
                   value={form.firstName}
                   onChange={handle}
-                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-400"
+                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition placeholder-gray-400"
                   required
                 />
               </motion.div>
@@ -72,7 +72,7 @@ export default function Register() {
                   placeholder="Nom"
                   value={form.lastName}
                   onChange={handle}
-                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-400"
+                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition placeholder-gray-400"
                   required
                 />
               </motion.div>
@@ -82,7 +82,7 @@ export default function Register() {
                   name="city"
                   value={form.city}
                   onChange={handle}
-                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-blue-500 focus:border-blue-500 outline-none transition"
+                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border-2 border-transparent hover:border-gold focus:border-gold outline-none transition"
                 >
                   <option value="Douala">Douala</option>
                   <option value="Yaounde">Yaounde</option>
@@ -94,7 +94,7 @@ export default function Register() {
                 disabled={loading}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gold hover:bg-gold/90 text-dark-gray font-bold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Traitement...' : 'Enregistrer'}
               </motion.button>

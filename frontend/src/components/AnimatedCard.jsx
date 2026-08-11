@@ -9,7 +9,7 @@ export default function AnimatedCard({ children, delay = 0, className = '' }) {
       whileInView={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)' }}
       transition={{ duration: 0.5, delay }}
-      className={`p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-blue-500 transition ${className}`}
+      className={`p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-gold transition ${className}`}
     >
       {children}
     </motion.div>

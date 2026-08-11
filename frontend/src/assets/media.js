@@ -10,9 +10,9 @@ import image5 from './images/carousel/image 5.jpeg';
 export const heroVideos = [heroVideo1, heroVideo2, heroVideo3];
 
 export const carouselPhotos = [
-  { id: 1, title: 'Photographe', desc: 'Moments captures', img: image1 },
-  { id: 2, title: 'Videographe', desc: 'Histoires en mouvement', img: image2 },
-  { id: 3, title: 'Designer', desc: 'Vision creative', img: image3 },
-  { id: 4, title: 'Creatif', desc: 'Innovation', img: image4 },
-  { id: 5, title: 'Production', desc: 'Excellence', img: image5 }
+  { id: 1, img: image1 },
+  { id: 2, img: image2 },
+  { id: 3, img: image3 },
+  { id: 4, img: image4 },
+  { id: 5, img: image5 }
 ];

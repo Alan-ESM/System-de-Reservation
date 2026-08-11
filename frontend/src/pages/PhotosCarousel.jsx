@@ -21,16 +21,8 @@ export default function PhotosCarousel() {
             {carouselPhotos.map((p) => (
               <SwiperSlide key={p.id} className="relative h-full">
                 <motion.div whileHover={{ scale: 1.05 }} className="relative w-full h-full overflow-hidden">
-                  <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
+                  <img src={p.img} alt="" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40" />
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black to-transparent"
-                  >
-                    <h3 className="text-white text-4xl font-bold">{p.title}</h3>
-                    <p className="text-gray-300 mt-2 text-lg">{p.desc}</p>
-                  </motion.div>
                 </motion.div>
               </SwiperSlide>
             ))}
